@@ -8,7 +8,6 @@ import six
 import logging
 logger = logging.getLogger(__name__)
 
-
 class ProtocolBase( collections.MutableMapping):
     __propinfo__ = {}
     __required__ = set()
@@ -65,7 +64,7 @@ class ProtocolBase( collections.MutableMapping):
         for prop in props:
 
             try:
-              logging.debug("Setting value for '{0}' to {1}"
+              logging.debug(u"Setting value for '{0}' to {1}"
                             .format(prop, props[prop]))
               setattr(this, prop, props[prop])
             except validators.ValidationError as e:
@@ -239,6 +238,8 @@ class LiteralValue(object):
     if isinstance(other, six.integer_types):
       return cmp(int(self), other)
     elif isinstance(other, six.string_types):
+      if six.PY2:
+        return cmp(unicode(self), unicode(other))
       return cmp(str(self), other)
     elif isinstance(other, float):
       return cmp(float(self), other)
@@ -253,6 +254,9 @@ class LiteralValue(object):
 
   def __str__(self):
     return str(self._value)
+
+  def __unicode__(self):
+    return unicode(self._value)
 
 
 class ClassBuilder(object):
